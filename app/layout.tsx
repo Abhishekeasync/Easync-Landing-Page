@@ -29,6 +29,14 @@ export const metadata: Metadata = {
   },
   description:
     "CA-built accounting software with GSTR-2B auto-reconciliation, e-invoicing, inventory & 3-month free trial.",
+  verification: {
+    other: {
+      "facebook-domain-verification": "tara8877od50rz3a5taj08frob7gkl",
+    },
+  },
+  icons: {
+    icon: "/logos/favicon.ico",
+  },
 };
 
 export default function RootLayout({

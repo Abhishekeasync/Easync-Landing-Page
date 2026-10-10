@@ -4,16 +4,16 @@ import { ArrowRight, CalendarCheck, CheckCircle, Clock, ShieldCheck } from "@pho
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useId, useState, type FormEvent, type ReactNode } from "react";
 import { ACCOUNTS_OPTIONS, BUSINESS_TYPES } from "./content";
-// import { TURNOVER_OPTIONS } from "./content";
 import { Button } from "./primitives";
+import { submitDemoRequest } from "./submitDemoRequest";
 
 export type DemoRequest = {
   fullName: string;
   mobile: string;
   email: string;
   businessType: string;
-  annualTurnover: string;
-  accountsToday: string;
+  currentTool: string;
+  website?: string;
 };
 
 type DemoField = keyof DemoRequest;
@@ -24,8 +24,8 @@ const initialValues: DemoRequest = {
   mobile: "",
   email: "",
   businessType: "",
-  annualTurnover: "",
-  accountsToday: "",
+  currentTool: "",
+  website: "",
 };
 
 const fieldOrder: DemoField[] = [
@@ -33,8 +33,7 @@ const fieldOrder: DemoField[] = [
   "mobile",
   "email",
   "businessType",
-  // "annualTurnover",
-  "accountsToday",
+  "currentTool",
 ];
 
 function normalizeMobile(value: string) {
@@ -61,11 +60,12 @@ export function validateDemoRequest(values: DemoRequest): DemoErrors {
   }
 
   if (!values.businessType) errors.businessType = "Select a type of business.";
-  // if (!values.annualTurnover) {
-  //   errors.annualTurnover = "Select your annual turnover.";
-  // }
-  if (!values.accountsToday) {
-    errors.accountsToday = "Select how you keep accounts today.";
+  
+  // currentTool is optional - no validation needed
+  
+  // Honeypot check
+  if (values.website && values.website.trim() !== "") {
+    errors.website = "This submission could not be accepted.";
   }
 
   return errors;
@@ -112,6 +112,8 @@ export function DemoForm() {
   const [values, setValues] = useState<DemoRequest>(initialValues);
   const [errors, setErrors] = useState<DemoErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [apiMessage, setApiMessage] = useState<string | null>(null);
 
   function fieldId(name: DemoField) {
     return `${formId}-${name}`;
@@ -121,13 +123,19 @@ export function DemoForm() {
     const next = { ...values, [name]: value };
     setValues(next);
     setSubmitted(false);
+    setApiMessage(null);
     if (Object.keys(errors).length > 0) {
       setErrors(validateDemoRequest(next));
     }
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    
+    // Don't submit if already loading
+    if (loading) return;
+    
+    // Client-side validation
     const nextErrors = validateDemoRequest(values);
     setErrors(nextErrors);
     const firstInvalid = fieldOrder.find((field) => nextErrors[field]);
@@ -137,7 +145,39 @@ export function DemoForm() {
       return;
     }
 
-    setSubmitted(true);
+    // Clear any previous API message
+    setApiMessage(null);
+    setLoading(true);
+
+    try {
+      const result = await submitDemoRequest({
+        fullName: values.fullName.trim(),
+        email: values.email.trim().toLowerCase(),
+        mobile: normalizeMobile(values.mobile),
+        businessType: values.businessType,
+        currentTool: values.currentTool || null,
+      });
+
+      if (result.success) {
+        // Success - show confirmation
+        setSubmitted(true);
+        setApiMessage(result.message);
+      } else {
+        // Failure - show errors
+        if (result.errors) {
+          // Field-level errors from server
+          setErrors(result.errors);
+          const firstServerError = fieldOrder.find((field) => result.errors![field]);
+          if (firstServerError) {
+            document.getElementById(fieldId(firstServerError))?.focus();
+          }
+        }
+        // Generic error message
+        setApiMessage(result.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   const inputClass = (invalid: boolean) =>
@@ -157,23 +197,6 @@ export function DemoForm() {
       onSubmit={handleSubmit}
       className="relative flex flex-col gap-5 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6"
     >
-      <div className="flex flex-col gap-1 border-b border-slate-200 pb-4">
-        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500">
-            <CalendarCheck size={14} weight="bold" /> Free 20-min demo
-          </span>
-          <span className="inline-flex items-center gap-1 text-xs text-slate-400">
-            <Clock size={12} weight="bold" /> Callback in 15 min
-          </span>
-        </div>
-        <h2 className="mt-2 text-lg font-medium tracking-tight text-slate-950">
-          Book a walkthrough
-        </h2>
-        <p className="text-sm text-slate-500">
-          GSTR-2B matching and inventory, on your kind of business.
-        </p>
-      </div>
-
       <AnimatePresence mode="wait">
         {submitted ? (
           <motion.div
@@ -182,28 +205,70 @@ export function DemoForm() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.25 }}
-            className="flex flex-col items-center justify-center gap-3 rounded-xl bg-emerald-50 border border-emerald-200/80 p-6 text-center my-4"
+            className="flex flex-col gap-2 py-2"
+            role="status"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-              <CheckCircle size={32} weight="fill" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900">
-              Demo Request Confirmed!
+            <h3 className="flex items-center gap-2 text-lg font-medium tracking-tight text-slate-950">
+              <CheckCircle
+                size={20}
+                weight="fill"
+                className="shrink-0 text-emerald-600"
+                aria-hidden
+              />
+              Request received
             </h3>
-            <p className="text-sm font-medium text-slate-700">
-              Thank you, <span className="font-bold text-slate-900">{values.fullName.trim()}</span>. Our senior implementation specialist will call you at <span className="font-bold text-slate-900">{values.mobile}</span> within 15 minutes.
+            <p className="text-sm leading-relaxed text-slate-600">
+              Thanks{values.fullName.trim() ? `, ${values.fullName.trim().split(/\s+/)[0]}` : ""}.
+              We&apos;ll reach out within 48 hours to arrange your demo. Check{" "}
+              <span className="text-slate-950">{values.email.trim()}</span> for
+              your confirmation.
             </p>
-            <div className="mt-2 text-xs font-semibold text-emerald-800 bg-emerald-100/60 rounded-lg px-3 py-1.5 border border-emerald-200">
-              ✓ 3 Months Free Trial voucher activated for your business.
-            </div>
           </motion.div>
         ) : (
           <motion.div
             key="form"
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-5"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
+            <div className="flex flex-col gap-1 border-b border-slate-200 pb-4">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                  <CalendarCheck size={14} weight="bold" /> Free 20-min demo
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs text-slate-400">
+                  <Clock size={12} weight="bold" /> Within 48 h
+                </span>
+              </div>
+              <h2 className="mt-2 text-lg font-medium tracking-tight text-slate-950">
+                Book a walkthrough
+              </h2>
+              <p className="text-sm text-slate-500">
+                GSTR-2B matching and inventory, on your kind of business.
+              </p>
+            </div>
+
+            {/* API error message */}
+            {apiMessage && !submitted && (
+              <div className="rounded-md bg-rose-50 border border-rose-200 p-3 text-sm text-rose-800">
+                {apiMessage}
+              </div>
+            )}
+
+            {/* Honeypot field - hidden from humans, filled by bots */}
+            <div className="absolute left-[-9999px] w-0 h-0 overflow-hidden" aria-hidden="true">
+              <label htmlFor={fieldId("website")}>Website</label>
+              <input
+                id={fieldId("website")}
+                name="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={values.website || ""}
+                onChange={(event) => update("website", event.target.value)}
+              />
+            </div>
+
             <Field
               id={fieldId("fullName")}
               label="Full Name"
@@ -308,19 +373,19 @@ export function DemoForm() {
               */}
 
               <Field
-                id={fieldId("accountsToday")}
+                id={fieldId("currentTool")}
                 label="Current Tool"
-                error={errors.accountsToday}
+                error={errors.currentTool}
               >
                 <select
-                  id={fieldId("accountsToday")}
-                  name="accountsToday"
-                  value={values.accountsToday}
-                  aria-invalid={Boolean(errors.accountsToday)}
+                  id={fieldId("currentTool")}
+                  name="currentTool"
+                  value={values.currentTool}
+                  aria-invalid={Boolean(errors.currentTool)}
                   onChange={(event) =>
-                    update("accountsToday", event.target.value)
+                    update("currentTool", event.target.value)
                   }
-                  className={selectClass(Boolean(errors.accountsToday))}
+                  className={selectClass(Boolean(errors.currentTool))}
                 >
                   <option value="">Select tool</option>
                   {ACCOUNTS_OPTIONS.map((option) => (
@@ -337,8 +402,15 @@ export function DemoForm() {
               variant="primary"
               size="lg"
               className="mt-1 w-full"
+              disabled={loading}
             >
-              Book Free Demo Now <ArrowRight size={16} weight="bold" />
+              {loading ? (
+                <>Submitting...</>
+              ) : (
+                <>
+                  Book Free Demo Now <ArrowRight size={16} weight="bold" />
+                </>
+              )}
             </Button>
 
             <div className="flex items-center justify-center gap-2 pt-1 text-[11px] text-slate-400">

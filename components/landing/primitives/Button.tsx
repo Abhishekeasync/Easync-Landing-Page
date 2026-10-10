@@ -10,6 +10,7 @@ export function Button({
   size = "md",
   className = "",
   type = "button",
+  disabled = false,
 }: {
   children: ReactNode;
   href?: string;
@@ -18,6 +19,7 @@ export function Button({
   size?: "sm" | "md" | "lg";
   className?: string;
   type?: "button" | "submit";
+  disabled?: boolean;
 }) {
   const base =
     "pressable relative inline-flex cursor-pointer items-center justify-center font-medium tracking-tight no-underline select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:pointer-events-none disabled:opacity-60";
@@ -50,7 +52,7 @@ export function Button({
   }
 
   return (
-    <button type={type} onClick={onClick} className={classes}>
+    <button type={type} onClick={onClick} disabled={disabled} className={classes}>
       {children}
     </button>
   );
