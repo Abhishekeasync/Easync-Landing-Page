@@ -2,7 +2,7 @@
 
 import { ArrowRight, CalendarCheck, CheckCircle, Clock, ShieldCheck } from "@phosphor-icons/react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useId, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { ACCOUNTS_OPTIONS, BUSINESS_TYPES } from "./content";
 import { Button } from "./primitives";
 import { submitDemoRequest } from "./submitDemoRequest";
@@ -74,12 +74,14 @@ export function validateDemoRequest(values: DemoRequest): DemoErrors {
 function Field({
   id,
   label,
+  required,
   error,
   className,
   children,
 }: {
   id: string;
   label: string;
+  required?: boolean;
   error?: string;
   className?: string;
   children: ReactNode;
@@ -90,7 +92,14 @@ function Field({
         className="flex items-center justify-between text-sm font-medium text-slate-700"
         htmlFor={id}
       >
-        <span>{label}</span>
+        <span>
+          {label}
+          {required ? (
+            <span className="text-rose-600" aria-hidden="true">
+              {" *"}
+            </span>
+          ) : null}
+        </span>
       </label>
       {children}
       {error ? (
@@ -101,6 +110,96 @@ function Field({
         >
           {error}
         </span>
+      ) : null}
+    </div>
+  );
+}
+
+function DemoSelect({
+  id,
+  value,
+  placeholder,
+  options,
+  invalid,
+  required,
+  onChange,
+}: {
+  id: string;
+  value: string;
+  placeholder: string;
+  options: readonly string[];
+  invalid: boolean;
+  required?: boolean;
+  onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointer(event: MouseEvent) {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const fieldClass = `w-full rounded-md border bg-white px-3 py-2.5 text-left text-sm transition-colors focus:outline-none focus:ring-2 demo-select pr-10 cursor-pointer ${
+    invalid
+      ? "border-rose-300 ring-rose-200"
+      : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/20"
+  } ${value ? "text-slate-950" : "text-slate-400"}`;
+
+  return (
+    <div ref={rootRef} className={`relative ${open ? "z-20" : ""}`}>
+      <button
+        type="button"
+        id={id}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-invalid={invalid}
+        aria-required={required || undefined}
+        onClick={() => setOpen((current) => !current)}
+        className={fieldClass}
+      >
+        {value || placeholder}
+      </button>
+      {open ? (
+        <ul
+          role="listbox"
+          className="absolute top-full right-0 left-0 z-20 mt-1 max-h-60 overflow-auto rounded-md border border-slate-200 bg-white py-1 shadow-sm"
+        >
+          {options.map((option) => {
+            const selected = value === option;
+            return (
+              <li key={option}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={selected}
+                  onClick={() => {
+                    onChange(option);
+                    setOpen(false);
+                  }}
+                  className={`w-full px-3 py-2 text-left text-sm ${
+                    selected
+                      ? "bg-slate-100 font-medium text-slate-950"
+                      : "text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  {option}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       ) : null}
     </div>
   );
@@ -187,9 +286,6 @@ export function DemoForm() {
         : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/20"
     }`;
 
-  const selectClass = (invalid: boolean) =>
-    `${inputClass(invalid)} demo-select pr-10 cursor-pointer`;
-
   return (
     <form
       id="demo"
@@ -272,12 +368,14 @@ export function DemoForm() {
             <Field
               id={fieldId("fullName")}
               label="Full Name"
+              required
               error={errors.fullName}
             >
               <input
                 id={fieldId("fullName")}
                 name="fullName"
                 type="text"
+                required
                 autoComplete="name"
                 placeholder="e.g. Rajesh Sharma"
                 value={values.fullName}
@@ -290,12 +388,14 @@ export function DemoForm() {
             <Field
               id={fieldId("mobile")}
               label="Mobile Number"
+              required
               error={errors.mobile}
             >
               <input
                 id={fieldId("mobile")}
                 name="mobile"
                 type="tel"
+                required
                 inputMode="numeric"
                 autoComplete="tel"
                 placeholder="10-digit mobile number"
@@ -306,11 +406,12 @@ export function DemoForm() {
               />
             </Field>
 
-            <Field id={fieldId("email")} label="Email" error={errors.email}>
+            <Field id={fieldId("email")} label="Email" required error={errors.email}>
               <input
                 id={fieldId("email")}
                 name="email"
                 type="email"
+                required
                 inputMode="email"
                 autoComplete="email"
                 spellCheck={false}
@@ -326,23 +427,18 @@ export function DemoForm() {
             <Field
               id={fieldId("businessType")}
               label="Type of Business"
+              required
               error={errors.businessType}
             >
-              <select
+              <DemoSelect
                 id={fieldId("businessType")}
-                name="businessType"
                 value={values.businessType}
-                aria-invalid={Boolean(errors.businessType)}
-                onChange={(event) => update("businessType", event.target.value)}
-                className={selectClass(Boolean(errors.businessType))}
-              >
-                <option value="">Select business industry</option>
-                {BUSINESS_TYPES.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+                placeholder="Select business industry"
+                options={BUSINESS_TYPES}
+                invalid={Boolean(errors.businessType)}
+                required
+                onChange={(value) => update("businessType", value)}
+              />
             </Field>
 
             <div className="grid grid-cols-1 gap-3">
@@ -377,23 +473,14 @@ export function DemoForm() {
                 label="Current Tool"
                 error={errors.currentTool}
               >
-                <select
+                <DemoSelect
                   id={fieldId("currentTool")}
-                  name="currentTool"
                   value={values.currentTool}
-                  aria-invalid={Boolean(errors.currentTool)}
-                  onChange={(event) =>
-                    update("currentTool", event.target.value)
-                  }
-                  className={selectClass(Boolean(errors.currentTool))}
-                >
-                  <option value="">Select tool</option>
-                  {ACCOUNTS_OPTIONS.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Select tool"
+                  options={ACCOUNTS_OPTIONS}
+                  invalid={Boolean(errors.currentTool)}
+                  onChange={(value) => update("currentTool", value)}
+                />
               </Field>
             </div>
 

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { WHATSAPP_DISPLAY, WHATSAPP_HREF } from "./content";
 import { Container } from "./primitives";
 import { WhatsAppMark } from "./WhatsAppButton";
@@ -17,7 +16,7 @@ export function Footer() {
       <Container>
         <div className="grid gap-10 py-12 md:grid-cols-[minmax(0,1.4fr)_auto_auto] md:py-14">
           <div className="max-w-sm">
-            <Link href="/" className="inline-flex shrink-0 items-center no-underline">
+            <a href="https://easyncbooks.com" className="inline-flex shrink-0 items-center no-underline">
               <img
                 src="/logos/Easync_Logo.webp"
                 alt="Easync Books"
@@ -27,10 +26,10 @@ export function Footer() {
                 decoding="async"
                 className="h-16 w-auto brightness-0 invert"
               />
-            </Link>
+            </a>
             <p className="mt-4 text-sm leading-relaxed">
               Compliance-first accounting for Indian MSMEs and CA firms.
-              Built with Teotia & Co.
+          
             </p>
           </div>
 
@@ -47,7 +46,7 @@ export function Footer() {
           </nav>
 
           <div className="text-sm leading-relaxed">
-            <p className="m-0 text-white">Teotia & Co.</p>
+            <p className="m-0 text-white">Easync Books</p>
             <p className="mt-2">info@easyncbooks.com</p>
             <a
               href={WHATSAPP_HREF}

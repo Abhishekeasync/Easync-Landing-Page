@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight, CaretRight, List, X } from "@phosphor-icons/react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "./primitives";
 
@@ -46,7 +45,7 @@ export function Header() {
 
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-[1120px] items-center justify-between gap-3 px-4 py-2 sm:gap-4 sm:px-6">
-          <Link href="/" className="inline-flex shrink-0 items-center no-underline">
+          <a href="https://easyncbooks.com" className="inline-flex shrink-0 items-center no-underline">
             <img
               src="/logos/Easync_Logo.webp"
               alt="Easync Books"
@@ -55,7 +54,7 @@ export function Header() {
               decoding="async"
               className="h-16 w-auto"
             />
-          </Link>
+          </a>
 
           <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
             {navItems.map((item) => (
