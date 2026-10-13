@@ -18,7 +18,8 @@ export function Faq() {
             </Reveal>
             <Reveal delay={0.05}>
               <h2 className="text-balance text-3xl font-medium tracking-tight text-slate-950 sm:text-4xl">
-                Before you book the demo.
+                Before you book{" "}
+                <span className="text-slate-500">the demo.</span>
               </h2>
             </Reveal>
           </div>

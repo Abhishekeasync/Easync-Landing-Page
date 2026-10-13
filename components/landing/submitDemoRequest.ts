@@ -12,6 +12,7 @@ export type DemoRequestPayload = {
   email: string;
   mobile: string;
   businessType: string;
+  businessTypeOther?: string | null;
   currentTool: string | null;
 };
 
@@ -45,6 +46,7 @@ export async function submitDemoRequest(
         email: data.email,
         mobile: data.mobile,
         businessType: data.businessType,
+        businessTypeOther: data.businessTypeOther || null,
         currentTool: data.currentTool,
       }),
     });

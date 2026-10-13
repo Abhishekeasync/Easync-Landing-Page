@@ -8,12 +8,70 @@ export const WHATSAPP_MESSAGE =
 
 export const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
+export const SIGN_IN_URL = "https://www.easyncbooks.com/signin";
+export const SIGN_UP_URL = "https://www.easyncbooks.com/signup";
+
+export const START_TRIAL_CTA_LABEL = "Start your 3-month free trial";
+export const NO_CARD_REQUIRED_NOTE = "No card required";
+
+export const PRICING_SECTION = {
+  eyebrowLabel: "Pricing",
+  eyebrow: "3 months free, then a clear bill",
+  title: "Pick your plan.",
+  titleAccent: "Use it free for 3 months.",
+  description:
+    "Run your real books on Easync before you pay a rupee. Plans for one GSTIN, a growing business group or a whole CA practice. Prices exclude GST.",
+  trialBanner: {
+    months: "3",
+    monthsLabel: "Months",
+    title: "Free on every plan",
+    detail: "No card to start · Free Tally & Excel migration",
+    perks: [
+      {
+        id: "no-card",
+        label: "No card to start",
+        hint: "Start the trial without payment details.",
+      },
+      {
+        id: "migration",
+        label: "Free Tally & Excel migration",
+        hint: "Opening balances and masters moved at no extra cost.",
+      },
+    ],
+  },
+} as const;
+
+export const HERO_SECTION = {
+  eyebrowLabel: "CA-built",
+  eyebrow: "Built by Chartered Accountants",
+  title: "Compliance-first accounting",
+  titleAccent: "for growing Indian businesses.",
+  description:
+    "Raise GST invoices, track stock and see who owes you, all in one place. Know your numbers anytime, without calling your accountant.",
+  trustLine: "Trusted by 100+ businesses and CA firms",
+  checks: [
+    "3-month free trial, all features",
+    "Free data import from Tally and Excel",
+    "GST, TDS and MCA compliance built in",
+  ],
+} as const;
+
+/** Hero / trust — update when live Google Business rating is confirmed */
+export const GOOGLE_REVIEWS = {
+  rating: 5,
+  label: "5.0 on Google",
+  reviewCount: "Google Reviews",
+} as const;
+
+export const OTHER_BUSINESS_TYPE = "Other";
+
 export const BUSINESS_TYPES = [
   "Trader / Distributor",
   "Manufacturer",
   "Service business",
   "Startup",
   "CA / Accounting firm",
+  OTHER_BUSINESS_TYPE,
 ] as const;
 
 export const TURNOVER_OPTIONS = [
@@ -29,18 +87,55 @@ export const ACCOUNTS_OPTIONS = [
   "Not started yet",
 ] as const;
 
-export const painPoints = [
+export type WhySwitchWidget = "aging" | "dashboard" | "inventory";
+
+export const WHY_SWITCH = {
+  eyebrowLabel: "Why switch",
+  eyebrow: "Why businesses switch to Easync",
+  title: "Stop chasing your numbers.",
+  titleAccent: "Easync shows them to you.",
+  description:
+    "Most business owners find out how their business is doing only when the accountant sends a report. Easync puts the answers you need every week on one screen, updated as you work.",
+} as const;
+
+export const SWITCH_NUMBERS_CTA = {
+  eyebrow: "3 months free",
+  title: "See your own numbers",
+  titleAccent: "this way.",
+  description: "Try it free for 3 months, or let us walk you through it.",
+} as const;
+
+export const whySwitchCards = [
   {
-    title: "Payment agle hafte kar denge.",
-    body: "See exactly who owes you, how much, and for how many days. Know whom to call first.",
+    problemQuote: "Payment agle hafte kar denge.",
+    problemBody:
+      "You hear it every week, and you're never sure how much money is actually stuck with customers.",
+    solutionTitle: "Know who owes you, and since when",
+    solutionBody:
+      "Every customer's pending amount, sorted by how late it is. Call the oldest dues first.",
+    linkLabel: "Aging reports",
+    widget: "aging" as WhySwitchWidget,
+    widgetTitle: "Pending from customers",
   },
   {
-    title: "Called your accountant three times this week?",
-    body: "Check sales, expenses and pending payments yourself, anytime. No calls, no waiting.",
+    problemQuote: "Called your accountant three times this week?",
+    problemBody: "Just to ask last month's sales, or whether a customer has paid.",
+    solutionTitle: "Your numbers, on your phone",
+    solutionBody:
+      "Sales, expenses and pending payments, live. Your accountant still handles the filings.",
+    linkLabel: "Live dashboard",
+    widget: "dashboard" as WhySwitchWidget,
+    widgetTitle: "This month",
   },
   {
-    title: "Godown mein kitna maal hai?",
-    body: "Track stock across every godown and branch in real time. Stop guessing, start knowing.",
+    problemQuote: "Godown mein kitna maal hai?",
+    problemBody: "The stock register says one thing. The godown says another.",
+    solutionTitle: "Stock you can trust, in every godown",
+    solutionBody:
+      "Live stock for each godown and branch, with transfers and real stock value.",
+    linkLabel: "Advanced inventory",
+    widget: "inventory" as WhySwitchWidget,
+    widgetTitle: "Stock by godown",
   },
 ] as const;
 
@@ -107,7 +202,12 @@ export const plans: readonly Plan[] = [
     entities: "1 entity",
     users: "2 users",
     popular: false,
-    features: ["GST filings", "Inventory", "E-way bills", "Audit trail"],
+    features: [
+      "GST filings",
+      "Inventory",
+      "E-way bills",
+      "Audit trail",
+    ],
   },
   {
     name: "Professional",
@@ -116,13 +216,15 @@ export const plans: readonly Plan[] = [
     yearlyBilling: "Billed ₹27,999 yearly",
     monthlyPrice: "₹2,799",
     entities: "3 entities",
-    users: "4 users / entity",
+    users: "4 users per entity",
     popular: true,
     features: [
-      "Everything in Basic",
+      "GST filings",
+      "Inventory",
+      "E-way bills",
+      "Audit trail",
       "E-invoicing",
       "Direct share",
-      "Multi-user access",
     ],
   },
   {
@@ -132,13 +234,19 @@ export const plans: readonly Plan[] = [
     yearlyBilling: "Billed ₹48,999 yearly",
     monthlyPrice: "₹4,899",
     entities: "8 entities",
-    users: "6 users / entity",
+    users: "6 users per entity",
     popular: false,
     features: [
-      "Everything in Professional",
+      "GST filings",
+      "Inventory",
+      "E-way bills",
+      "Audit trail",
+      "E-invoicing",
+      "Direct share",
       "Multiple GSTNs",
       "GSTR-2B reconciliation",
-      "Auto reco & auto feed",
+      "Auto reco",
+      "Auto feed",
     ],
   },
   {
@@ -147,17 +255,38 @@ export const plans: readonly Plan[] = [
     yearlyPrice: "₹1,967",
     yearlyBilling: "Billed ₹23,600 yearly",
     monthlyPrice: "₹2,359",
-    entities: "25 entities",
-    users: "2 users / entity",
+    entities: "25 client entities",
+    users: "2 users per entity",
     popular: false,
     features: [
+      "GST filings",
+      "Inventory",
+      "E-way bills",
+      "Audit trail",
+      "E-invoicing",
+      "Direct share",
       "Multiple GSTNs",
       "GSTR-2B reconciliation",
       "Auto reco",
-      "E-invoicing & e-way bills",
     ],
   },
 ];
+
+export const PLAN_INCLUDES = {
+  title: "Every plan includes",
+  features: [
+    "3-month free trial",
+    "Free Tally & Excel migration",
+    "GST invoices, quotations, credit & debit notes",
+    "P&L, balance sheet & aging reports",
+    "Cloud access on laptop & phone",
+    "Role-based access",
+    "Export your data anytime",
+  ],
+  helpText:
+    "Not sure which plan fits? We'll help you choose on a free 20-minute call.",
+  demoLinkLabel: "Book a free demo",
+} as const;
 
 export const faqs = [
   {
@@ -187,15 +316,96 @@ export const faqs = [
   },
 ] as const;
 
+export const INDIA_SECTION = {
+  eyebrowLabel: "India",
+  eyebrow: "GST, TDS and MCA built in",
+  title: "Made for Indian businesses",
+  titleAccent: "that run on GST.",
+  description:
+    "Whether you sell from one shop, ship from three godowns or manage books for 25 clients, Easync handles invoicing, GST, TDS and MCA compliance in one login.",
+} as const;
+
 export const audienceStats = [
-  { value: "CA-built", label: "by practising Chartered Accountants" },
-  { value: "100+", label: "businesses served" },
-  { value: "Cloud", label: "access from laptop or phone" },
-  { value: "Multi-GSTN", label: "entities and branches, one login" },
+  {
+    value: "CA-built",
+    label: "Built by practising Chartered Accountants",
+  },
+  { value: "100+", label: "Businesses and CA firms using Easync" },
+  { value: "Anywhere", label: "Laptop or phone, office or godown" },
+  {
+    value: "Multi-GSTN",
+    label: "All your entities and branches, one login",
+  },
 ] as const;
 
-export const testimonials = [
+export const BUILT_FOR = {
+  title: "Built for",
+  segments: [
+    {
+      title: "Traders, wholesalers & distributors",
+      body: "Stock, e-way bills and customer dues",
+    },
+    {
+      title: "Manufacturers & job-work units",
+      body: "Multiple godowns, purchases and stock value",
+    },
+    {
+      title: "Service businesses & agencies",
+      body: "GST invoicing and payment tracking",
+    },
+    {
+      title: "Consultants & professional firms",
+      body: "Clean billing and TDS records",
+    },
+    {
+      title: "Startups",
+      body: "Books set up right from the first invoice",
+    },
+    {
+      title: "Business groups",
+      body: "Multiple companies and GSTNs under one login",
+    },
+    {
+      title: "CA firms & tax consultants",
+      body: "Client books, filings and reconciliations in one place",
+    },
+  ],
+  entityTypes:
+    "Proprietorships · Partnerships · LLPs · Private Limited companies",
+  usedBy:
+    "Used by business owners, finance heads, in-house accountants and CAs.",
+} as const;
+
+export const CUSTOMER_RESULTS = {
+  eyebrowLabel: "Customers",
+  eyebrow: "Customer results",
+  title: "Real businesses.",
+  titleAccent: "Real hours back.",
+  description:
+    "What changed for owners and CA firms once their books moved to Easync, in their own words.",
+  footerBold: "100+ businesses and CA firms",
+  footerRest: "already running their books on Easync.",
+} as const;
+
+export const customerFeaturedStory = {
+  quote:
+    "Month-end used to take four days. Now I reconcile bank, GST and inventory in one afternoon.",
+  name: "Priya Mehta",
+  role: "Finance Head",
+  company: "Mehta Polymers, Ahmedabad",
+  initial: "PM",
+  beforeAfter: {
+    beforeLabel: "Before",
+    beforeValue: "4 days",
+    afterLabel: "With Easync",
+    afterValue: "1 afternoon",
+    caption: "to close the month: bank, GST and inventory",
+  },
+} as const;
+
+export const customerStories = [
   {
+    headline: "Follow-up list ready every Monday",
     quote:
       "We stopped chasing payments blindly. The aging report tells us exactly which bills to follow up on every Monday.",
     name: "Ramesh Gupta",
@@ -204,14 +414,7 @@ export const testimonials = [
     initial: "RG",
   },
   {
-    quote:
-      "Month-end used to take four days. Now I reconcile bank, GST and inventory in one afternoon.",
-    name: "Priya Mehta",
-    role: "Finance Head",
-    company: "Mehta Polymers, Ahmedabad",
-    initial: "PM",
-  },
-  {
+    headline: "One login for my whole practice",
     quote:
       "I manage 18 clients in one login. Auto reconciliation and GSTR-2B matching alone save 30 hours a month.",
     name: "CA Shubham Teotia",
@@ -220,6 +423,63 @@ export const testimonials = [
     initial: "ST",
   },
 ] as const;
+
+export type FounderTextPart = { text: string; bold?: boolean };
+
+export const FOUNDER_LINKEDIN_URL =
+  "https://www.linkedin.com/in/shubhamteotia/";
+
+export const FOUNDER_SECTION = {
+  eyebrowLabel: "Founder",
+  eyebrow: "A practising Chartered Accountant",
+  titleLead: `I built the software`,
+  titleAccent: "I wished my clients already had.",
+  bodyParagraphs: [
+    [
+      {
+        text:
+          "For 10+ years, I've handled GST, taxation and virtual-CFO work for startups, manufacturers and growing businesses. Every month, I saw the same problems: ",
+      },
+      {
+        text:
+          "missed due dates, GSTR-2B mismatches, bills arriving on WhatsApp, and owners who couldn't see their own numbers",
+        bold: true,
+      },
+      { text: " without calling my firm." },
+    ],
+    [{ text: "Easync Books is the fix I built for them." }],
+  ],
+  name: "CA Shubham Teotia",
+  roleLine: "Founder, Easync Books",
+  credentials: [
+    "Chartered Accountant, ICAI",
+    "10+ years in practice",
+    "GST & taxation specialist",
+    "Virtual CFO for growing businesses",
+  ],
+  pillars: [
+    {
+      icon: "hexagon" as const,
+      title: "Built for Indian rules",
+      body:
+        "GST, TDS and MCA designed in from day one, not adapted from foreign software.",
+    },
+    {
+      icon: "list" as const,
+      title: "Tested on real books",
+      body: "Every feature is used on live client books before it reaches you.",
+    },
+    {
+      icon: "chat" as const,
+      title: "Support that speaks accounts",
+      body: "Talk to people who understand GST and books, not just software.",
+    },
+  ],
+  demoCta: "Talk to our team: Book a free demo",
+  linkedInLabel: "Connect with Shubham on LinkedIn",
+  imageSrc: "/Founder/Shubham.webp",
+  imageAlt: "CA Shubham Teotia, founder of Teotia & Co.",
+} as const;
 
 export type CustomerBrand = {
   name: string;

@@ -44,7 +44,10 @@ export function Features() {
             </Reveal>
             <Reveal delay={0.05}>
               <h2 className="text-balance text-3xl font-medium tracking-tight text-slate-950 sm:text-4xl">
-                Built for business owners. Clear enough for your CA.
+                Built for business owners.{" "}
+                <span className="text-slate-500">
+                  Clear enough for your CA.
+                </span>
               </h2>
             </Reveal>
             <Reveal delay={0.1}>

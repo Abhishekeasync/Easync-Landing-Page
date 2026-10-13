@@ -87,18 +87,17 @@ export function WhatsAppButton() {
       aria-label="Chat on WhatsApp"
       aria-hidden={covered}
       tabIndex={covered ? -1 : 0}
-      className={`group fixed right-5 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-[#128C7E] text-white shadow-[0_8px_18px_rgba(7,94,84,0.22)] transition-[transform,opacity,background-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.04] hover:bg-[#075E54] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${
+      className={`group fixed right-5 z-30 flex h-12 items-center justify-center gap-0 overflow-hidden rounded-full bg-[#128C7E] pl-3 pr-3 text-white shadow-[0_8px_18px_rgba(7,94,84,0.22)] transition-[transform,opacity,background-color,gap,padding] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.02] hover:bg-[#075E54] hover:gap-2 hover:pr-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:pl-4 sm:pr-4 sm:hover:pr-5 ${
         covered ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
       style={{ bottom: "max(1.25rem, env(safe-area-inset-bottom))" }}
     >
+      <WhatsappLogo size={26} weight="fill" className="block shrink-0" aria-hidden="true" />
       <span
-        aria-hidden="true"
-        className="pointer-events-none absolute right-[calc(100%+0.65rem)] hidden whitespace-nowrap rounded-md bg-slate-950 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-[0_8px_16px_rgba(15,23,42,0.16)] transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 md:[@media(hover:hover)]:block"
+        className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-medium opacity-0 transition-[max-width,opacity] duration-200 group-hover:max-w-[7rem] group-hover:opacity-100 group-focus-visible:max-w-[7rem] group-focus-visible:opacity-100 sm:group-hover:max-w-[7.5rem]"
       >
-        Chat on WhatsApp
+        Chat now
       </span>
-      <WhatsappLogo size={28} weight="fill" className="block" aria-hidden="true" />
     </a>
   );
 }

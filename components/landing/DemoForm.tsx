@@ -1,9 +1,10 @@
 "use client";
 
-import { ArrowRight, CalendarCheck, CheckCircle, Clock, ShieldCheck } from "@phosphor-icons/react";
+import { ArrowRight, CalendarCheck, CheckCircle, Clock } from "@phosphor-icons/react";
+import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { ACCOUNTS_OPTIONS, BUSINESS_TYPES } from "./content";
+import { ACCOUNTS_OPTIONS, BUSINESS_TYPES, OTHER_BUSINESS_TYPE } from "./content";
 import { Button } from "./primitives";
 import { submitDemoRequest } from "./submitDemoRequest";
 
@@ -12,6 +13,7 @@ export type DemoRequest = {
   mobile: string;
   email: string;
   businessType: string;
+  businessTypeOther: string;
   currentTool: string;
   website?: string;
 };
@@ -24,6 +26,7 @@ const initialValues: DemoRequest = {
   mobile: "",
   email: "",
   businessType: "",
+  businessTypeOther: "",
   currentTool: "",
   website: "",
 };
@@ -33,6 +36,7 @@ const fieldOrder: DemoField[] = [
   "mobile",
   "email",
   "businessType",
+  "businessTypeOther",
   "currentTool",
 ];
 
@@ -60,6 +64,13 @@ export function validateDemoRequest(values: DemoRequest): DemoErrors {
   }
 
   if (!values.businessType) errors.businessType = "Select a type of business.";
+
+  if (values.businessType === OTHER_BUSINESS_TYPE) {
+    const detail = values.businessTypeOther.trim();
+    if (detail.length > 200) {
+      errors.businessTypeOther = "Please keep this under 200 characters.";
+    }
+  }
   
   // currentTool is optional - no validation needed
   
@@ -75,6 +86,7 @@ function Field({
   id,
   label,
   required,
+  optional,
   error,
   className,
   children,
@@ -82,6 +94,7 @@ function Field({
   id: string;
   label: string;
   required?: boolean;
+  optional?: boolean;
   error?: string;
   className?: string;
   children: ReactNode;
@@ -89,7 +102,7 @@ function Field({
   return (
     <div className={`flex min-w-0 flex-col gap-1.5 ${className ?? ""}`}>
       <label
-        className="flex items-center justify-between text-sm font-medium text-slate-700"
+        className="flex flex-col gap-0.5 text-sm font-medium text-slate-700"
         htmlFor={id}
       >
         <span>
@@ -100,6 +113,9 @@ function Field({
             </span>
           ) : null}
         </span>
+        {optional ? (
+          <span className="text-xs font-normal text-slate-400">(optional)</span>
+        ) : null}
       </label>
       {children}
       {error ? (
@@ -220,6 +236,9 @@ export function DemoForm() {
 
   function update(name: DemoField, value: string) {
     const next = { ...values, [name]: value };
+    if (name === "businessType" && value !== OTHER_BUSINESS_TYPE) {
+      next.businessTypeOther = "";
+    }
     setValues(next);
     setSubmitted(false);
     setApiMessage(null);
@@ -254,6 +273,10 @@ export function DemoForm() {
         email: values.email.trim().toLowerCase(),
         mobile: normalizeMobile(values.mobile),
         businessType: values.businessType,
+        businessTypeOther:
+          values.businessType === OTHER_BUSINESS_TYPE
+            ? values.businessTypeOther.trim() || null
+            : null,
         currentTool: values.currentTool || null,
       });
 
@@ -332,15 +355,16 @@ export function DemoForm() {
                 <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500">
                   <CalendarCheck size={14} weight="bold" /> Free 20-min demo
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs text-slate-400">
-                  <Clock size={12} weight="bold" /> Within 48 h
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-600">
+                  <Clock size={12} weight="bold" /> Callback within 48 hrs
                 </span>
               </div>
               <h2 className="mt-2 text-lg font-medium tracking-tight text-slate-950">
-                Book a walkthrough
+                Book your free demo
               </h2>
               <p className="text-sm text-slate-500">
-                GSTR-2B matching and inventory, on your kind of business.
+                We&apos;ll show you how Easync handles your invoicing, GST and
+                stock, for your kind of business.
               </p>
             </div>
 
@@ -441,6 +465,29 @@ export function DemoForm() {
               />
             </Field>
 
+            {values.businessType === OTHER_BUSINESS_TYPE ? (
+              <Field
+                id={fieldId("businessTypeOther")}
+                label="Tell us your business"
+                optional
+                error={errors.businessTypeOther}
+              >
+                <input
+                  id={fieldId("businessTypeOther")}
+                  name="businessTypeOther"
+                  type="text"
+                  autoComplete="organization"
+                  placeholder="e.g. retail, pharma, construction"
+                  value={values.businessTypeOther}
+                  aria-invalid={Boolean(errors.businessTypeOther)}
+                  onChange={(event) =>
+                    update("businessTypeOther", event.target.value)
+                  }
+                  className={inputClass(Boolean(errors.businessTypeOther))}
+                />
+              </Field>
+            ) : null}
+
             <div className="grid grid-cols-1 gap-3">
               {/*
               <Field
@@ -500,9 +547,19 @@ export function DemoForm() {
               )}
             </Button>
 
-            <div className="flex items-center justify-center gap-2 pt-1 text-[11px] text-slate-400">
-              <ShieldCheck size={14} weight="fill" className="text-emerald-500" />
-              <span>Zero obligation · No credit card required</span>
+            <div className="flex flex-col gap-2 pt-2 text-center">
+              <p className="m-0 text-[11px] font-medium text-slate-500">
+                Free · No obligation · We&apos;ll call you within 48 hours
+              </p>
+              <p className="m-0 text-[11px] leading-relaxed text-slate-400">
+                By submitting, you agree to be contacted about Easync Books.{" "}
+                <Link
+                  href="/privacy"
+                  className="text-slate-600 underline underline-offset-2 hover:text-slate-950"
+                >
+                  Privacy policy
+                </Link>
+              </p>
             </div>
           </motion.div>
         )}

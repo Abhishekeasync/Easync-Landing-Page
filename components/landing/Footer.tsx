@@ -8,6 +8,7 @@ const footerLinks = [
   { label: "Pricing", href: "#pricing" },
   { label: "Book a demo", href: "#demo" },
   { label: "FAQ", href: "#faq" },
+  { label: "Privacy policy", href: "/privacy" },
 ];
 
 export function Footer() {

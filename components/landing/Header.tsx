@@ -2,6 +2,7 @@
 
 import { ArrowRight, CaretRight, List, X } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
+import { SIGN_IN_URL, SIGN_UP_URL } from "./content";
 import { Button } from "./primitives";
 
 const navItems = [
@@ -69,8 +70,11 @@ export function Header() {
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
-            <Button href="#demo" variant="primary" size="sm">
-              Book a demo <ArrowRight size={14} weight="bold" />
+            <Button href={SIGN_IN_URL} variant="ghost" size="sm">
+              Login
+            </Button>
+            <Button href={SIGN_UP_URL} variant="primary" size="sm">
+              Start a free trial <ArrowRight size={14} weight="bold" />
             </Button>
           </div>
 
@@ -124,15 +128,24 @@ export function Header() {
                 </a>
               ))}
             </nav>
-            <div className="mt-auto pt-6">
+            <div className="mt-auto flex flex-col gap-2 pt-6">
               <Button
-                href="#demo"
+                href={SIGN_UP_URL}
                 variant="primary"
                 size="lg"
                 className="w-full"
                 onClick={() => setMobileOpen(false)}
               >
-                Book a demo
+                Start a free trial <ArrowRight size={16} weight="bold" />
+              </Button>
+              <Button
+                href={SIGN_IN_URL}
+                variant="ghost"
+                size="lg"
+                className="w-full"
+                onClick={() => setMobileOpen(false)}
+              >
+                Login
               </Button>
             </div>
           </div>
