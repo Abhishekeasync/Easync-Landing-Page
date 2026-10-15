@@ -387,40 +387,42 @@ export const CUSTOMER_RESULTS = {
   footerRest: "already running their books on Easync.",
 } as const;
 
-export const customerFeaturedStory = {
-  quote:
-    "Month-end used to take four days. Now I reconcile bank, GST and inventory in one afternoon.",
-  name: "Priya Mehta",
-  role: "Finance Head",
-  company: "Mehta Polymers, Ahmedabad",
-  initial: "PM",
-  beforeAfter: {
-    beforeLabel: "Before",
-    beforeValue: "4 days",
-    afterLabel: "With Easync",
-    afterValue: "1 afternoon",
-    caption: "to close the month: bank, GST and inventory",
-  },
-} as const;
-
 export const customerStories = [
   {
-    headline: "Follow-up list ready every Monday",
+    headline: "Records when you need them",
     quote:
-      "We stopped chasing payments blindly. The aging report tells us exactly which bills to follow up on every Monday.",
-    name: "Ramesh Gupta",
-    role: "Proprietor",
-    company: "Gupta Electricals, Delhi",
-    initial: "RG",
+      "For us, accounting is not just about recording transactions; it is about having information properly organized whenever we need to review it. Easync Books has helped us bring our day-to-day accounting activities into a much more structured system. Transactions, records, and other financial information are easier to maintain and refer back to without having to search through different files or sources. The overall experience has been straightforward, and it has helped us maintain better consistency in the way we manage our business accounts.",
+    name: "Manish Gupta",
+    role: "Director",
+    company: "SourceWise Solutions",
+    photo: "/Clients_Photos/Manish.webp",
   },
   {
-    headline: "One login for my whole practice",
+    headline: "Simple and efficient",
     quote:
-      "I manage 18 clients in one login. Auto reconciliation and GSTR-2B matching alone save 30 hours a month.",
-    name: "CA Shubham Teotia",
+      "Easync Books accounting software is very helpful, user-friendly, and easy to use. It makes accounting tasks simple and efficient.",
+    name: "Vishal Tripathi",
+    role: "Partner",
+    company: "Ishu Jobworks LLP",
+    photo: "/Clients_Photos/Vishal.webp",
+  },
+  {
+    headline: "Organized in one place",
+    quote:
+      "We wanted accounting software that was simple, practical, and efficient. Easync Books has met our expectations by making everyday accounting easier and keeping financial records and transactions organized in one place. Its user-friendly approach fits seamlessly into our daily operations, allowing our team to focus more on business growth and less on managing software.",
+    name: "Thakur Raj Kumar Singh",
+    role: "Director",
+    company: "Tryab",
+    photo: "/Clients_Photos/Raj%20Kumar.webp",
+  },
+  {
+    headline: "More time for the business",
+    quote:
+      "As the founder of Wintex Trading Hub, I wanted an accounting solution that was simple, reliable, and easy to manage alongside our daily business operations. Easync Books has helped us keep our financial records organized, manage transactions efficiently, and maintain better visibility over our finances. Its straightforward approach makes accounting less time-consuming, allowing us to focus more on growing our business.",
+    name: "Sunny Kumar Ray",
     role: "Founder",
-    company: "Teotia & Co.",
-    initial: "ST",
+    company: "Wintex Trading Hub",
+    photo: "/Clients_Photos/Sunny.webp",
   },
 ] as const;
 

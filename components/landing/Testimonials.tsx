@@ -1,68 +1,63 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ArrowRight } from "@phosphor-icons/react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   CUSTOMER_RESULTS,
   SIGN_UP_URL,
-  customerFeaturedStory,
   customerStories,
 } from "./content";
-import { FeaturedBeforeAfter } from "./FeaturedBeforeAfter";
 import { Button, Container, Reveal, Section } from "./primitives";
 import { Eyebrow } from "./SectionHeading";
 
+const VISIBLE = 3;
+const ROTATE_MS = 6000;
+const easeOut = [0.22, 1, 0.36, 1] as const;
+
+type CustomerStory = (typeof customerStories)[number];
+
+function PersonPhoto({ src, size }: { src: string; size: "md" | "sm" }) {
+  const dim = size === "md" ? "h-10 w-10" : "h-9 w-9";
+  return (
+    <img
+      src={src}
+      alt=""
+      className={`${dim} shrink-0 rounded-full object-cover object-center`}
+    />
+  );
+}
+
 function PersonMeta({
-  initial,
+  photo,
   name,
   detail,
-  variant,
 }: {
-  initial: string;
+  photo: string;
   name: string;
   detail: string;
-  variant: "dark" | "light";
 }) {
-  const avatar =
-    variant === "dark"
-      ? "bg-emerald-500/20 text-sm font-medium text-emerald-200"
-      : "bg-slate-100 text-xs font-medium text-slate-700";
-  const nameClass =
-    variant === "dark" ? "text-sm font-medium text-white" : "text-sm font-medium text-slate-950";
-  const detailClass =
-    variant === "dark" ? "text-xs text-slate-400" : "text-xs text-slate-500";
-
   return (
     <figcaption className="flex items-center gap-3 border-t border-slate-800 pt-5">
-      <span
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${avatar}`}
-      >
-        {initial}
-      </span>
+      <PersonPhoto src={photo} size="md" />
       <span className="min-w-0">
-        <span className={`block ${nameClass}`}>{name}</span>
-        <span className={`block ${detailClass}`}>{detail}</span>
+        <span className="block text-sm font-medium text-white">{name}</span>
+        <span className="block text-xs text-slate-400">{detail}</span>
       </span>
     </figcaption>
   );
 }
 
-function FeaturedStoryCard() {
-  const story = customerFeaturedStory;
-  const { beforeAfter } = story;
-
+function FeaturedStoryCard({ story }: { story: CustomerStory }) {
   return (
     <figure className="flex h-full min-h-0 flex-col justify-between gap-8 rounded-2xl bg-slate-950 p-6 text-white sm:p-8">
-      <div>
-        <FeaturedBeforeAfter data={beforeAfter} />
-        <blockquote className="m-0 mt-8 text-lg font-medium leading-relaxed tracking-tight text-white sm:text-xl">
-          &ldquo;{story.quote}&rdquo;
-        </blockquote>
-      </div>
+      <blockquote className="m-0 text-lg font-medium leading-relaxed tracking-tight text-white sm:text-xl">
+        &ldquo;{story.quote}&rdquo;
+      </blockquote>
       <PersonMeta
-        initial={story.initial}
+        photo={story.photo}
         name={story.name}
         detail={`${story.role} · ${story.company}`}
-        variant="dark"
       />
     </figure>
   );
@@ -74,14 +69,14 @@ function StoryCard({
   name,
   role,
   company,
-  initial,
+  photo,
 }: {
   headline: string;
   quote: string;
   name: string;
   role: string;
   company: string;
-  initial: string;
+  photo: string;
 }) {
   return (
     <figure className="flex h-full flex-col justify-between gap-6 rounded-2xl border border-slate-200 bg-white p-6">
@@ -94,11 +89,7 @@ function StoryCard({
         </blockquote>
       </div>
       <figcaption className="flex items-center gap-3 border-t border-slate-100 pt-4">
-        <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-slate-700"
-        >
-          {initial}
-        </span>
+        <PersonPhoto src={photo} size="sm" />
         <span className="min-w-0">
           <span className="block text-sm font-medium text-slate-950">{name}</span>
           <span className="block text-xs text-slate-500">
@@ -107,6 +98,54 @@ function StoryCard({
         </span>
       </figcaption>
     </figure>
+  );
+}
+
+function CustomerCarousel() {
+  const reduce = useReducedMotion();
+  const total = customerStories.length;
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (total <= 1) return;
+    const id = window.setTimeout(() => {
+      setIndex((current) => (current - 1 + total) % total);
+    }, ROTATE_MS);
+    return () => window.clearTimeout(id);
+  }, [index, total]);
+
+  const visible = Array.from({ length: Math.min(VISIBLE, total) }, (_, offset) => {
+    return customerStories[(index + offset) % total];
+  });
+  const [featured, ...sides] = visible;
+  const slotMotion = (delay: number) => ({
+    initial: reduce ? false : { opacity: 0, y: -16 },
+    animate: { opacity: 1, y: 0 },
+    exit: reduce ? { opacity: 0 } : { opacity: 0, y: 16 },
+    transition: { duration: 0.45, ease: easeOut, delay: reduce ? 0 : delay },
+  });
+
+  return (
+    <>
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div key={featured.name} {...slotMotion(0.28)}>
+          <FeaturedStoryCard story={featured} />
+        </motion.div>
+      </AnimatePresence>
+      <div className="flex flex-col gap-3">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {sides.map((story, slot) => (
+            <motion.div
+              key={story.name}
+              layout
+              {...slotMotion((sides.length - 1 - slot) * 0.14)}
+            >
+              <StoryCard {...story} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
 
@@ -176,19 +215,10 @@ export function Testimonials() {
           </div>
 
           <div
-            className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:items-stretch"
+            className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:items-start"
             aria-labelledby="customer-results-heading"
           >
-            <Reveal className="h-full lg:min-h-[420px]">
-              <FeaturedStoryCard />
-            </Reveal>
-            <div className="flex flex-col gap-3">
-              {customerStories.map((story, index) => (
-                <Reveal key={story.name} delay={0.05 + index * 0.05} className="h-full flex-1">
-                  <StoryCard {...story} />
-                </Reveal>
-              ))}
-            </div>
+            <CustomerCarousel />
           </div>
 
           <CustomerResultsCta />
