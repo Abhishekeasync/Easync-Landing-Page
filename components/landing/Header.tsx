@@ -6,8 +6,8 @@ import { SIGN_IN_URL, SIGN_UP_URL } from "./content";
 import { Button } from "./primitives";
 
 const navItems = [
-  // { label: "Features", href: "#features" },
-  // { label: "Product", href: "#product-demo" },
+  { label: "Features", href: "#features" },
+  { label: "Product", href: "#product-demo" },
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
 ];

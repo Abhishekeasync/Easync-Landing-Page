@@ -15,18 +15,18 @@ export function ProductPreview() {
         <div className="flex flex-col gap-8">
           <div className="flex max-w-2xl flex-col gap-4">
             <Reveal>
-              <Eyebrow label="Product">A workspace, not a slideshow</Eyebrow>
+              <Eyebrow label="Product">Live screens</Eyebrow>
             </Reveal>
             <Reveal delay={0.05}>
               <h2 className="text-balance text-3xl font-medium tracking-tight text-slate-950 sm:text-4xl">
-                Reconciliation, aging, e-invoicing, and stock{" "}
-                <span className="text-slate-500">in one view.</span>
+                GSTR-2B, aging, banking, and godowns{" "}
+                <span className="text-slate-500">as they look in Easync.</span>
               </h2>
             </Reveal>
             <Reveal delay={0.1}>
               <p className="text-base leading-relaxed text-slate-600">
-                Switch modules below. The sample books show how a month looks
-                once GST, debtors, and godowns sit together.
+                Pick a module. Each picture is the product: GST differences,
+                unpaid bills, cash, warehouses, and the e-way bill on the invoice.
               </p>
             </Reveal>
           </div>

@@ -209,8 +209,11 @@ function MovingRow({
   const live = 1;
 
   return (
-    <div className="relative">
-      <div ref={viewportRef} className="overflow-hidden py-1">
+    <div className="relative min-w-0 max-w-full">
+      <div
+        ref={viewportRef}
+        className="max-w-full overflow-x-clip overflow-y-visible py-1 contain-[layout_paint]"
+      >
         <div
           ref={trackRef}
           className="flex w-max items-center"
@@ -280,7 +283,7 @@ export function LogoMarquee({ brands }: { brands: readonly CustomerBrand[] }) {
 
   return (
     <div
-      className="flex flex-col gap-1"
+      className="flex min-w-0 max-w-full flex-col gap-1"
       onPointerEnter={(event: PointerEvent<HTMLDivElement>) => {
         if (event.pointerType !== "touch") setPaused(true);
       }}

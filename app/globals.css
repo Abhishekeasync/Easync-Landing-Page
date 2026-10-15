@@ -89,6 +89,8 @@
 
 html {
   scroll-padding-top: 6rem;
+  overflow-x: clip;
+  scrollbar-gutter: stable;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -139,6 +141,29 @@ html {
 
 .reveal-fade {
   animation-name: reveal-fade;
+}
+
+@keyframes carousel-progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.carousel-progress {
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: carousel-progress-fill var(--carousel-ms, 6000ms) linear forwards;
+}
+
+.carousel-progress[data-paused] {
+  animation-play-state: paused;
+}
+
+.carousel-progress--instant {
+  animation-duration: 0.01ms;
 }
 
 .trust-logo {
@@ -239,6 +264,11 @@ h1, h2, h3, h4, h5, h6 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .carousel-progress {
+    animation: none;
+    transform: scaleX(1);
   }
 
   .trust-logo {

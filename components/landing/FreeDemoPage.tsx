@@ -2,13 +2,13 @@ import { Audience } from "./Audience";
 import { Benefits } from "./Benefits";
 import { CTASection } from "./CTASection";
 import { Faq } from "./Faq";
-// import { Features } from "./Features";
+import { Features } from "./Features";
 import { Footer } from "./Footer";
 import { Founder } from "./Founder";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
 import { Pricing } from "./Pricing";
-// import { ProductPreview } from "./ProductPreview";
+import { ProductPreview } from "./ProductPreview";
 import { Testimonials } from "./Testimonials";
 import { TrustSection } from "./TrustSection";
 import { WhatsAppButton } from "./WhatsAppButton";
@@ -21,10 +21,10 @@ export function FreeDemoPage() {
         <Hero />
         <TrustSection />
         <Benefits />
-        {/* <Features /> */}
+        <Features />
         <Testimonials />
         <Audience />
-        {/* <ProductPreview /> */}
+        <ProductPreview />
         <Pricing />
         <Founder />
         <Faq />

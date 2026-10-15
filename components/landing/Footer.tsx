@@ -3,8 +3,8 @@ import { Container } from "./primitives";
 import { WhatsAppMark } from "./WhatsAppButton";
 
 const footerLinks = [
-  // { label: "Features", href: "#features" },
-  // { label: "Product", href: "#product-demo" },
+  { label: "Features", href: "#features" },
+  { label: "Product", href: "#product-demo" },
   { label: "Pricing", href: "#pricing" },
   { label: "Book a demo", href: "#demo" },
   { label: "FAQ", href: "#faq" },

@@ -10,7 +10,11 @@ export function TrustSection() {
           <p className="m-0 text-center text-sm text-slate-600">
             Used by businesses and CA firms across India
           </p>
-          <div className="w-full" role="region" aria-label="Customer logos">
+          <div
+            className="w-full min-w-0 overflow-x-clip"
+            role="region"
+            aria-label="Customer logos"
+          >
             <LogoMarquee brands={customerLogos} />
           </div>
         </div>
