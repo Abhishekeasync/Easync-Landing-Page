@@ -5,7 +5,9 @@ import { Container, Reveal, Section } from "./primitives";
 import { Eyebrow } from "./SectionHeading";
 
 const DashboardVisual = dynamic(() => import("./DashboardVisual").then((mod) => mod.DashboardVisual), {
-  loading: () => <div className="min-h-[500px] w-full animate-pulse rounded-xl border border-slate-200 bg-slate-50" />,
+  loading: () => (
+    <div className="min-h-[280px] w-full animate-pulse rounded-xl border border-slate-200 bg-slate-50 sm:min-h-[360px]" />
+  ),
 });
 
 export function ProductPreview() {

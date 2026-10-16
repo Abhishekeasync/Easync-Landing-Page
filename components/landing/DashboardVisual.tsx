@@ -14,7 +14,18 @@ import { EASE_OUT } from "./motion";
 
 type ScreenId = "gstr2b" | "aging" | "banking" | "insights" | "godown" | "eway";
 
-const screens = [
+type ScreenConfig = {
+  id: ScreenId;
+  title: string;
+  summary: string;
+  file: string;
+  alt: string;
+  icon: typeof Clock;
+  objectPosition?: string;
+  maxHeight?: string;
+};
+
+const screens: readonly ScreenConfig[] = [
   {
     id: "gstr2b",
     title: "Match the portal with your books",
@@ -68,15 +79,11 @@ const screens = [
     file: "One Click e-way bill.png",
     alt: "Easync invoice details with Generate E-Way Bill highlighted in the Select Action menu",
     icon: Truck,
+    /** ponytail: asset has extra canvas below UI; crop via object position until asset is re-exported */
+    objectPosition: "top",
+    maxHeight: "min(72vh, 32rem)",
   },
-] as const satisfies ReadonlyArray<{
-  id: ScreenId;
-  title: string;
-  summary: string;
-  file: string;
-  alt: string;
-  icon: typeof Clock;
-}>;
+];
 
 function pictureSrc(file: string) {
   return `/Software_Pictures/${encodeURIComponent(file)}`;
@@ -86,6 +93,7 @@ export function DashboardVisual() {
   const reduce = useReducedMotion();
   const [activeId, setActiveId] = useState<ScreenId>(screens[0].id);
   const active = screens.find((screen) => screen.id === activeId) ?? screens[0];
+  const ActiveIcon = active.icon;
 
   function move(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     const key = event.key;
@@ -110,13 +118,13 @@ export function DashboardVisual() {
   return (
     <div
       id="product-demo"
-      className="grid gap-6 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-10"
+      className="grid gap-6 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:items-start lg:gap-10"
     >
       <div
         role="tablist"
         aria-label="Product screens"
         aria-orientation="vertical"
-        className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible"
+        className="flex gap-1 overflow-x-auto pb-1 lg:max-h-[calc(100vh-7rem)] lg:flex-col lg:overflow-x-visible lg:overflow-y-auto lg:overscroll-contain lg:pb-0"
       >
         {screens.map((screen, index) => {
           const Icon = screen.icon;
@@ -154,25 +162,47 @@ export function DashboardVisual() {
         id="product-screen"
         role="tabpanel"
         aria-labelledby={`product-tab-${active.id}`}
-        className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
+        className="w-full self-start overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.05),0_24px_48px_-28px_rgba(15,23,42,0.2)] lg:sticky lg:top-24"
       >
-        <p className="border-b border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 lg:sr-only">
+        <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-2.5">
+          <span className="flex shrink-0 gap-1.5" aria-hidden>
+            <span className="h-2.5 w-2.5 rounded-full bg-red-400/90" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-400/90" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/90" />
+          </span>
+          <span className="flex min-w-0 items-center gap-2 text-xs font-medium text-slate-700">
+            <ActiveIcon size={14} weight="bold" className="shrink-0 text-blue-600" aria-hidden />
+            <span className="truncate">{active.title}</span>
+          </span>
+        </div>
+
+        <p className="border-b border-slate-100 px-4 py-3 text-sm leading-relaxed text-slate-600">
           {active.summary}
         </p>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.img
-            key={active.id}
-            src={pictureSrc(active.file)}
-            alt={active.alt}
-            width={1440}
-            height={900}
-            className="h-auto w-full bg-white"
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={reduce ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: 0.2, ease: EASE_OUT }}
-          />
-        </AnimatePresence>
+
+        <div className="overflow-hidden bg-slate-100">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.img
+              key={active.id}
+              src={pictureSrc(active.file)}
+              alt={active.alt}
+              width={1440}
+              height={900}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className={`block w-full ${active.maxHeight ? "object-cover object-top" : "h-auto"}`}
+              style={{
+                maxHeight: active.maxHeight ?? undefined,
+                objectPosition: active.objectPosition ?? undefined,
+              }}
+              initial={reduce ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduce ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.22, ease: EASE_OUT }}
+            />
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
